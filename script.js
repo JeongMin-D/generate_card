@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
 function generateCard() {
     const cardContainer = document.getElementById("cardContainer");
 
-    // The Python script you provided, converted to JavaScript
     const width = 800, height = 600;
 
     // 무작위 이미지 가져오기
@@ -23,20 +22,32 @@ function generateCard() {
                 ctx.drawImage(bg_img, 0, 0);
 
                 // 텍스트 추가
-                const fontSize = 36;
+                const fontSize = 18;  // 더 작은 폰트 크기
                 const font = `${fontSize}px korea`;
                 const message = "님 생축이요 맛난거 많이 먹고 만수무강 하셈!";
-                const textX = (width - ctx.measureText(message).width) / 2;
+                const textWidth = ctx.measureText(message).width;
+                const textX = (width - textWidth) / 2;
                 const textY = (height - fontSize) / 2;
 
                 // 텍스트의 배경을 흰색으로 설정
+                const backgroundPaddingX = 100; // 가로 크기를 조정합니다.
+                const backgroundPaddingY = 20; // 세로 크기를 조정합니다.
                 ctx.fillStyle = "white";
-                ctx.fillRect(textX, textY, ctx.measureText(message).width, fontSize);
+                ctx.fillRect(
+                    (width - textWidth) / 2 - backgroundPaddingX,
+                    textY - backgroundPaddingY,
+                    textWidth + 2 * backgroundPaddingX,
+                    fontSize + 2 * backgroundPaddingY
+                );
 
                 // 텍스트 추가
                 ctx.fillStyle = "black";
                 ctx.font = font;
-                ctx.fillText(message, textX, textY);
+
+                // 텍스트를 가운데 정렬
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(message, width / 2, height / 2);
 
                 // 이미지를 HTML에 추가
                 cardContainer.innerHTML = '';
