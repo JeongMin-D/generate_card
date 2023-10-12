@@ -3,53 +3,44 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function generateCard() {
-    // JavaScript code
+    const cardContainer = document.getElementById("cardContainer");
 
-    const fetch = require('node-fetch');
-    const fs = require('fs');
-    const { createCanvas, loadImage, registerFont } = require('canvas');
+    // The Python script you provided, converted to JavaScript
+    const width = 800, height = 600;
 
-    const canvas = createCanvas(800, 600);
-    const ctx = canvas.getContext('2d');
+    // 무작위 이미지 가져오기
+    fetch("https://source.unsplash.com/random/800x600")
+        .then(response => response.blob())
+        .then(blob => {
+            const bg_img = new Image();
+            bg_img.src = URL.createObjectURL(blob);
+            bg_img.onload = () => {
+                // 카드 생성
+                const card = document.createElement("canvas");
+                card.width = width;
+                card.height = height;
+                const ctx = card.getContext('2d');
+                ctx.drawImage(bg_img, 0, 0);
 
-    async function generateCard() {
-        // Fetch random image
-        const response = await fetch("https://source.unsplash.com/random/800x600");
-        const buffer = await response.buffer();
-        const bgImage = await loadImage(buffer);
+                // 텍스트 추가
+                const fontSize = 36;
+                const font = `${fontSize}px korea`;
+                const message = "님 생축이요 맛난거 많이 먹고 만수무강 하셈!";
+                const textX = (width - ctx.measureText(message).width) / 2;
+                const textY = (height - fontSize) / 2;
 
-        // Create card
-        ctx.drawImage(bgImage, 0, 0);
+                // 텍스트의 배경을 흰색으로 설정
+                ctx.fillStyle = "white";
+                ctx.fillRect(textX, textY, ctx.measureText(message).width, fontSize);
 
-        // Add text
-        const fontPath = "./korea.ttf";
-        registerFont(fontPath, { family: 'korea' });
-        const fontSize = 36;
-        ctx.font = `${fontSize}px korea`;
+                // 텍스트 추가
+                ctx.fillStyle = "black";
+                ctx.font = font;
+                ctx.fillText(message, textX, textY);
 
-        const message = "님 생축이요 맛난거 많이 먹고 만수무강 하셈!";
-        const textWidth = ctx.measureText(message).width;
-        const textX = (canvas.width - textWidth) / 2;
-        const textY = (canvas.height - fontSize) / 2;
-
-        // Set text background
-        ctx.fillStyle = "white";
-        ctx.fillRect(textX, textY, textWidth, fontSize);
-
-        // Draw text
-        ctx.fillStyle = "black";
-        ctx.fillText(message, textX, textY);
-
-        // Save image
-        const bufferOut = canvas.toBuffer('image/png');
-        fs.writeFileSync("happy_birthday_card.png", bufferOut);
-
-        // Show image
-        const cardImage = await loadImage(bufferOut);
-        document.body.appendChild(cardImage);
-    }
-
-// Call the function on page load if needed
-// generateCard();
-
+                // 이미지를 HTML에 추가
+                cardContainer.innerHTML = '';
+                cardContainer.appendChild(card);
+            }
+        });
 }
